@@ -1,0 +1,26 @@
+{
+    "description": "Implementation of the Neos NodeSearchServiceInterface using the Elasticsearch index",
+    "type": "neos-package",
+    "name": "punktde/elastic-nodesearchservice",
+    "license": "MIT",
+    "keywords": [
+        "Neos",
+        "Search",
+        "Elasticsearch"
+    ],
+    "require": {
+        "neos/flow": "*",
+        "flowpack/elasticsearch-contentrepositoryadaptor": "^7.0 || dev-master",
+        "neos/neos": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PunktDe\\Elastic\\NodeSearchService\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Flowpack.Elasticsearch.NodeSearchService"
+        }
+    }
+}
