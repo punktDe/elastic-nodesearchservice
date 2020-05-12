@@ -2,12 +2,15 @@
 
 [![Latest Stable Version](https://poser.pugx.org/punktde/elastic-nodesearchservice/v/stable)](https://packagist.org/packages/punktde/elastic-nodesearchservice) [![Total Downloads](https://poser.pugx.org/punktde/elastic-nodesearchservice/downloads)](https://packagist.org/packages/punktde/elastic-nodesearchservice)
 
-This is an implementation of the Neos NodeSearchService using the Elasticsearch index. 
-It is highly customizable in order to get the best search experience for the project. 
+This is an implementation of the Neos NodeSearchService using the Elasticsearch index of the content repository. This vastly reduces the query time for Search-As-You-Type fields in the backend if you have lots of nodes in your project. Additionally it is highly customizable in order to get the best search experience for the project. 
 
 Multiple search strategies can be defined which are then selected according to the SearchNodeType, StartingPoint and the term. With this feature you are able to sort news documents returned in a reference selector by publish date while other documents are sorted alphabetically.  
 
 Note: While the original database search does a like search in all properties of the document, the default strategy of this package only does a prefix search in the title field. Replace it with the search strategy that fit your needs.
+
+The following example shows a reference selector for news articles with 23 000 Documents.
+
+![Example](Documentation/elastic-vs-db.gif)
 
 ## Installation
 
