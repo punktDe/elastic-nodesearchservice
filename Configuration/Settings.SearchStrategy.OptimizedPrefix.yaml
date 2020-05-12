@@ -1,3 +1,6 @@
+# This search strategy does a multi_match prefix query to search in an optimized prefix search
+# field which is filled with sensible data of the searchable nodes.
+
 PunktDe:
   Elastic:
     NodeSearchService:

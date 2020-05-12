@@ -1,7 +1,7 @@
-'Neos.Neos:Document':
-  properties:
-    punktde_node_search:
-      search:
-        elasticSearchMapping:
-          type: search_as_you_type
-        indexing: '${q(node).property("title")}'
+#'Neos.Neos:Document':
+#  properties:
+#    punktde_node_search:
+#      search:
+#        elasticSearchMapping:
+#          type: search_as_you_type
+#        indexing: '${q(node).property("title")}'
