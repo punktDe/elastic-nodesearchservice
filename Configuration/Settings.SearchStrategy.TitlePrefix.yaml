@@ -1,9 +1,11 @@
+# This search strategy does a
+
 PunktDe:
   Elastic:
     NodeSearchService:
-      logRequests: false
+      logRequests: true
       searchStrategies:
-        default:
+        titlePrefix:
           condition: '${true}'
           request:
             query:
@@ -15,7 +17,7 @@ PunktDe:
                       - multi_match:
                           query: ARGUMENT_TERM
                           type: bool_prefix
-                          fields: ['punktde_node_search', 'punktde_node_search._2gram', 'punktde_node_search._3gram']
+                          fields: ['title']
                     must:
                       - terms:
                           __typeAndSupertypes: ARGUMENT_SEARCHNODETYPES
@@ -26,5 +28,5 @@ PunktDe:
                           _hidden: true
             _source:
               - __path
-            size: 10
+            size: 20
 

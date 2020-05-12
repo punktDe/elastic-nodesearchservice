@@ -1,0 +1,30 @@
+PunktDe:
+  Elastic:
+    NodeSearchService:
+      logRequests: true
+      searchStrategies:
+        optimizedPrefix:
+          condition: '${false}'
+          request:
+            query:
+              bool:
+                filter:
+                  bool:
+                    minimum_should_match: 1
+                    should:
+                      - multi_match:
+                          query: ARGUMENT_TERM
+                          type: bool_prefix
+                          fields: ['punktde_node_search', 'punktde_node_search._2gram', 'punktde_node_search._3gram']
+                    must:
+                      - terms:
+                          __typeAndSupertypes: ARGUMENT_SEARCHNODETYPES
+                      - term:
+                          __parentPath: ARGUMENT_STARTINGPOINT
+                    must_not:
+                      - term:
+                          _hidden: true
+            _source:
+              - __path
+            size: 20
+

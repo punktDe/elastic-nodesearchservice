@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace PunktDe\Elastic\NodeSearchService;
 
 /*
- *  (c) 2020 punkt.de GmbH - Karlsruhe, Germany - http://punkt.de
- *  All rights reserved.
+ * This file is part of the PunktDe.Elastic.NodeSearchService package.
+ *
+ * This package is open source software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
  */
 
 use Flowpack\ElasticSearch\ContentRepositoryAdaptor\ElasticSearchClient;
@@ -16,7 +19,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Utility\Arrays;
 use Psr\Log\LoggerInterface;
-
+use PunktDe\Elastic\NodeSearchService\Service\EelEvaluationService;
 
 /**
  * Find nodes based on a elasticsearch query
@@ -25,7 +28,6 @@ use Psr\Log\LoggerInterface;
  */
 class NodeSearchService implements NodeSearchServiceInterface
 {
-
     /**
      * @Flow\Inject
      * @var ElasticSearchClient
@@ -39,6 +41,12 @@ class NodeSearchService implements NodeSearchServiceInterface
     protected $logger;
 
     /**
+     * @Flow\Inject
+     * @var EelEvaluationService
+     */
+    protected $eelEvaluationService;
+
+    /**
      * @Flow\InjectConfiguration(path="searchStrategies", package="PunktDe.Elastic.NodeSearchService")
      * @var array
      */
@@ -49,6 +57,12 @@ class NodeSearchService implements NodeSearchServiceInterface
      * @var bool
      */
     protected $logRequests = false;
+
+    /**
+     * @Flow\Inject
+     * @var \Neos\Neos\Domain\Service\NodeSearchService
+     */
+    protected $datbaseNodeSearchService;
 
     /**
      * @param string $term
@@ -65,12 +79,24 @@ class NodeSearchService implements NodeSearchServiceInterface
     public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
     {
         $this->elasticSearchClient->setContextNode($startingPoint ?? $context->getRootNode());
-        $request = $this->searchStrategies['default']['request'];
+        $strategy = $this->determineSearchStrategy($term, $searchNodeTypes, $context, $startingPoint = null);
+
+        if (empty($strategy)) {
+            $this->logger->info('No searchStrategy could be determined, falling back to database search.', LogEnvironment::fromMethodName(__METHOD__));
+            return $this->datbaseNodeSearchService->findByProperties($term, $searchNodeTypes, $context, $startingPoint);
+        }
+
+        if (!isset($strategy['request']) || !is_array($strategy['request'])) {
+            $this->logger->error('No request was defined for the given search strategy.', LogEnvironment::fromMethodName(__METHOD__));
+            return [];
+        }
+
+        $request = $strategy['request'];
 
         $replacements = [
             'ARGUMENT_SEARCHNODETYPES' => array_values($searchNodeTypes),
             'ARGUMENT_TERM' => $term,
-            'ARGUMENT_STARTINGPOINT' => $startingPoint instanceof NodeInterface ? $startingPoint->getPath() : $context->getRootNode(),
+            'ARGUMENT_STARTINGPOINT' => $startingPoint instanceof NodeInterface ? $startingPoint->getPath() : $context->getRootNode()->getPath(),
         ];
 
         array_walk_recursive(
@@ -96,8 +122,36 @@ class NodeSearchService implements NodeSearchServiceInterface
 
         $this->logRequests && $this->logger->debug(sprintf('Executed Query: %s -- execution time: %s ms -- Number of results returned: %s -- Total Results: %s', $requestAsJson, (($timeAfterwards - $timeBefore) * 1000), count($hits), 1), LogEnvironment::fromMethodName(__METHOD__));
 
+        $timeBefore = microtime(true);
+        $nodes = $this->convertHitsToNodes($hits);
+        $timeAfterwards = microtime(true);
 
-        return $this->convertHitsToNodes($hits);
+        $this->logRequests && $this->logger->debug(sprintf('Loaded and dehydrated %s nodes in %s ms', count($nodes), (($timeAfterwards - $timeBefore) * 1000)), LogEnvironment::fromMethodName(__METHOD__));
+        return $nodes;
+    }
+
+    protected function determineSearchStrategy($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null): array
+    {
+        foreach ($this->searchStrategies as $searchStrategyIdentifier => $searchStrategy) {
+            if (!isset($searchStrategy['condition']) || !$this->eelEvaluationService->isValidExpression($searchStrategy['condition'])) {
+                $this->logger->warning(sprintf('No search condition was defined for strategy %s', $searchStrategyIdentifier), LogEnvironment::fromMethodName(__METHOD__));
+                continue;
+            }
+
+            $shouldUse = $this->eelEvaluationService->evaluate($searchStrategy['condition'], [
+                'term' => $term,
+                'searchNodeTypes' => $searchNodeTypes,
+                'context' => $context,
+                'startingPoint' => $startingPoint,
+            ]);
+
+            if ($shouldUse === true) {
+                $this->logger->debug('Using searchStrategy ' . $searchStrategyIdentifier, LogEnvironment::fromMethodName(__METHOD__));
+                return $searchStrategy;
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -119,7 +173,6 @@ class NodeSearchService implements NodeSearchServiceInterface
             }
         }
 
-        $this->logger->debug('Returned nodes: ' . count($nodes), LogEnvironment::fromMethodName(__METHOD__));
         return array_values($nodes);
     }
 }
