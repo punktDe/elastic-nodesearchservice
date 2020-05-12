@@ -120,7 +120,7 @@ class NodeSearchService implements NodeSearchServiceInterface
         $result = $response->getTreatedContent();
         $hits = Arrays::getValueByPath($result, 'hits.hits');
 
-        $this->logRequests && $this->logger->debug(sprintf('Executed Query: %s -- execution time: %s ms -- Number of results returned: %s -- Total Results: %s', $requestAsJson, (($timeAfterwards - $timeBefore) * 1000), count($hits), 1), LogEnvironment::fromMethodName(__METHOD__));
+        $this->logRequests && $this->logger->debug(sprintf('Executed Query: %s -- execution time: %s ms -- Number of results returned: %s', $requestAsJson, (($timeAfterwards - $timeBefore) * 1000), count($hits)), LogEnvironment::fromMethodName(__METHOD__));
 
         $timeBefore = microtime(true);
         $nodes = $this->convertHitsToNodes($hits);
