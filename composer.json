@@ -21,6 +21,9 @@
     "extra": {
         "neos": {
             "package-key": "Flowpack.Elasticsearch.NodeSearchService"
-        }
+        },
+        "applied-flow-migrations": [
+            "Flowpack.ElasticSearch.ContentRepositoryAdaptor-20200513223401"
+        ]
     }
 }

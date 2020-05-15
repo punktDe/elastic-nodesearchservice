@@ -20,13 +20,13 @@ PunktDe:
                           fields: ['title']
                     must:
                       - terms:
-                          __typeAndSupertypes: ARGUMENT_SEARCHNODETYPES
+                          neos_type_and_supertypes: ARGUMENT_SEARCHNODETYPES
                       - term:
-                          __parentPath: ARGUMENT_STARTINGPOINT
+                          neos_parent_path : ARGUMENT_STARTINGPOINT
                     must_not:
                       - term:
-                          _hidden: true
+                          neos_hidden: true
             _source:
-              - __path
+              - neos_path
             size: 20
 

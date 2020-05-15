@@ -163,7 +163,7 @@ class NodeSearchService implements NodeSearchServiceInterface
         $nodes = [];
 
         foreach ($hits as $hit) {
-            $nodePath = $hit[isset($hit['fields']['__path']) ? 'fields' : '_source']['__path'];
+            $nodePath = $hit[isset($hit['fields']['neos_path']) ? 'fields' : '_source']['neos_path'];
             if (is_array($nodePath)) {
                 $nodePath = current($nodePath);
             }
