@@ -1,5 +1,4 @@
 # This search strategy does a multi_match prefix query to search in the title field of the documents.
-
 PunktDe:
   Elastic:
     NodeSearchService:
