@@ -10,8 +10,8 @@
     ],
     "require": {
         "neos/flow": "*",
-        "flowpack/elasticsearch-contentrepositoryadaptor": "^5.0 || ^6.0",
-        "neos/neos": "^4.3 || ^5.0"
+        "flowpack/elasticsearch-contentrepositoryadaptor": "^7.0 || dev-master",
+        "neos/neos": "^5.0"
     },
     "autoload": {
         "psr-4": {
