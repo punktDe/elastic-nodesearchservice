@@ -17,6 +17,13 @@ The following example shows a reference selector for news articles with 23 000 D
 The installation is done with composer:
 
 	composer require punktde/elastic-nodesearchservice
+	
+Compatibility to [Flowpack.ElasticSearch.ContentRepositoryAdaptor](https://github.com/Flowpack/Flowpack.ElasticSearch.ContentRepositoryAdaptor):
+
+|Elastic.NodeSearchService| ElasticSearch.ContentRepositoryAdaptor          |
+|----------|---------------|
+| 1        | 5.x, 6.x      |
+| 2        | 7.x    |
 
 ## Configuration
 
