@@ -41,7 +41,7 @@ This example uses a multi_match prefix query to search in the title field of the
 	                      - multi_match:
 	                          query: ARGUMENT_TERM
 	                          type: bool_prefix
-	                          fields: ['title']
+	                          fields: ['punktde_node_search']
 	                    must:
 	                      - terms:
 	                          __typeAndSupertypes: ARGUMENT_SEARCHNODETYPES
