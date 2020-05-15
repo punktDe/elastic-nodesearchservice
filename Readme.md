@@ -22,7 +22,7 @@ The installation is done with composer:
 
 ### Example
 
-This example uses a multi_match prefix query to search in the title field of the documents.
+This example uses a multi_match prefix query to search in the `punktde_node_search` field indexed for documents. 
 
 	PunktDe:
 	  Elastic:
@@ -30,7 +30,7 @@ This example uses a multi_match prefix query to search in the title field of the
 	      logRequests: true
 	      searchStrategies:
 	        titlePrefix:
-	          condition: '${true}'
+	          condition: '${Array.indexOf(searchNodeTypes, "Neos.Neos:Document")}'
 	          request:
 	            query:
 	              bool:
@@ -57,7 +57,8 @@ This example uses a multi_match prefix query to search in the title field of the
 
 
 
-The `condition` is an Eel query, which can be parametrized by the following values. It is used to determine the search strategy to be used.
+The `condition` is an Eel query, which can be parametrized by the following values. It is used to determine the search strategy to be used. 
+If no search strategy could be found, it falls back to database search.
 
 | ParameterName            | Description                            |
 |--------------------------|----------------------------------------|
