@@ -10,7 +10,7 @@
     ],
     "require": {
         "neos/flow": "*",
-        "flowpack/elasticsearch-contentrepositoryadaptor": "^6.0 || ^7.0 || dev-master",
+        "flowpack/elasticsearch-contentrepositoryadaptor": "^5.0 || ^6.0",
         "neos/neos": "^4.3 || ^5.0"
     },
     "autoload": {
