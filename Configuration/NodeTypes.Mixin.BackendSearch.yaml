@@ -1,0 +1,8 @@
+'NodeTypes.Mixin.BackendSearch':
+  abstract: true
+  properties:
+    punktde_node_search:
+      search:
+        elasticSearchMapping:
+          type: text
+        indexing: '${q(node).property("title")}'
