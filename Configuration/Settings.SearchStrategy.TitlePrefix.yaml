@@ -5,7 +5,7 @@ PunktDe:
       logRequests: true
       searchStrategies:
         titlePrefix:
-          condition: '${Array.indexOf(searchNodeTypes, "Neos.Neos:Document")}'
+          condition: '${Array.indexOf(searchNodeTypes, "Neos.Neos:Document") != -1}'
           request:
             query:
               bool:

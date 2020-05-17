@@ -140,7 +140,7 @@ class NodeSearchService implements NodeSearchServiceInterface
 
             $shouldUse = $this->eelEvaluationService->evaluate($searchStrategy['condition'], [
                 'term' => $term,
-                'searchNodeTypes' => $searchNodeTypes,
+                'searchNodeTypes' => array_values($searchNodeTypes),
                 'context' => $context,
                 'startingPoint' => $startingPoint,
             ]);
