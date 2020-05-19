@@ -4,5 +4,5 @@
     punktde_node_search:
       search:
         elasticSearchMapping:
-          type: text
+          type: search_as_you_type
         indexing: '${q(node).property("title")}'
