@@ -49,14 +49,14 @@ This example uses a multi_match prefix query to search in the `punktde_node_sear
 	                          query: ARGUMENT_TERM
 	                          type: bool_prefix
 	                          fields: ['punktde_node_search', 'punktde_node_search._2gram', 'punktde_node_search._3gram']
-	                    must:
-	                      - terms:
-	                          __typeAndSupertypes: ARGUMENT_SEARCHNODETYPES
-	                      - term:
-	                          __parentPath: ARGUMENT_STARTINGPOINT
-	                    must_not:
-	                      - term:
-	                          _hidden: true
+			    must:
+			      - terms:
+				  neos_type_and_supertypes: ARGUMENT_SEARCHNODETYPES
+			      - term:
+				  neos_parent_path : ARGUMENT_STARTINGPOINT
+			    must_not:
+			      - term:
+				  neos_hidden: true
 	            _source:
 	              - __path
 	            size: 20
