@@ -59,6 +59,12 @@ class NodeSearchService implements NodeSearchServiceInterface
     protected $logRequests = false;
 
     /**
+     * @Flow\InjectConfiguration(path="fallBackOnEmptyResult", package="PunktDe.Elastic.NodeSearchService")
+     * @var bool
+     */
+    protected $fallBackOnEmptyResult = false;
+
+    /**
      * @Flow\Inject
      * @var \Neos\Neos\Domain\Service\NodeSearchService
      */
@@ -125,6 +131,11 @@ class NodeSearchService implements NodeSearchServiceInterface
         $timeBefore = microtime(true);
         $nodes = $this->convertHitsToNodes($hits);
         $timeAfterwards = microtime(true);
+
+        if (empty($nodes) && $this->fallBackOnEmptyResult) {
+            $this->logger->info('Result was empty, falling back to database search.', LogEnvironment::fromMethodName(__METHOD__));
+            return $this->datbaseNodeSearchService->findByProperties($term, $searchNodeTypes, $context, $startingPoint);
+        }
 
         $this->logRequests && $this->logger->debug(sprintf('Loaded and dehydrated %s nodes in %s ms', count($nodes), (($timeAfterwards - $timeBefore) * 1000)), LogEnvironment::fromMethodName(__METHOD__));
         return $nodes;

@@ -5,6 +5,7 @@ PunktDe:
   Elastic:
     NodeSearchService:
       logRequests: true
+      fallBackOnEmptyResult: false
       searchStrategies:
         titlePrefix:
           condition: '${Array.indexOf(searchNodeTypes, "Neos.Neos:Document") != -1}'
