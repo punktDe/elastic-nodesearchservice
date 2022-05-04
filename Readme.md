@@ -23,7 +23,7 @@ Compatibility to [Flowpack.ElasticSearch.ContentRepositoryAdaptor](https://githu
 |Elastic.NodeSearchService| ElasticSearch.ContentRepositoryAdaptor          |
 |----------|---------------|
 | 1        | 5.x, 6.x      |
-| 2        | 7.x    |
+| 2        | 7.x, 8.x    |
 
 ## Configuration
 
