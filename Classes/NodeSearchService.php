@@ -11,13 +11,14 @@ namespace PunktDe\Elastic\NodeSearchService;
  * source code.
  */
 
-use Flowpack\ElasticSearch\ContentRepositoryAdaptor\ElasticSearchClient;
 use Neos\Flow\Annotations as Flow;
+use Flowpack\ElasticSearch\ContentRepositoryAdaptor\ElasticSearchClient;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Utility\Arrays;
+use Neos\Utility\PositionalArraySorter;
 use Psr\Log\LoggerInterface;
 use PunktDe\Elastic\NodeSearchService\Service\EelEvaluationService;
 
@@ -88,7 +89,7 @@ class NodeSearchService implements NodeSearchServiceInterface
         $strategy = $this->determineSearchStrategy($term, $searchNodeTypes, $context, $startingPoint = null);
 
         if (empty($strategy)) {
-            $this->logger->info('No searchStrategy could be determined, falling back to database search.', LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->info(sprintf('No searchStrategy could be determined for StartingPoint "%s" and NodeTypes "%s", falling back to database search.', (string)$startingPoint, implode(',', $searchNodeTypes)), LogEnvironment::fromMethodName(__METHOD__));
             return $this->datbaseNodeSearchService->findByProperties($term, $searchNodeTypes, $context, $startingPoint);
         }
 
@@ -143,7 +144,9 @@ class NodeSearchService implements NodeSearchServiceInterface
 
     protected function determineSearchStrategy($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null): array
     {
-        foreach ($this->searchStrategies as $searchStrategyIdentifier => $searchStrategy) {
+        $sortedSearchStrategies = new PositionalArraySorter($this->searchStrategies);
+
+        foreach ($sortedSearchStrategies->toArray() as $searchStrategyIdentifier => $searchStrategy) {
             if (!isset($searchStrategy['condition']) || !$this->eelEvaluationService->isValidExpression($searchStrategy['condition'])) {
                 $this->logger->warning(sprintf('No search condition was defined for strategy %s', $searchStrategyIdentifier), LogEnvironment::fromMethodName(__METHOD__));
                 continue;

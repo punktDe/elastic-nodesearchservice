@@ -7,6 +7,7 @@ PunktDe:
       logRequests: true
       fallBackOnEmptyResult: false
       searchStrategies:
+        position: end
         titlePrefix:
           condition: '${Array.indexOf(searchNodeTypes, "Neos.Neos:Document") != -1}'
           request:
