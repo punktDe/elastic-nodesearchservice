@@ -23,7 +23,7 @@ Compatibility to [Flowpack.ElasticSearch.ContentRepositoryAdaptor](https://githu
 |Elastic.NodeSearchService| ElasticSearch.ContentRepositoryAdaptor          |
 |----------|---------------|
 | 1        | 5.x, 6.x      |
-| 2        | 7.x, 8.x    |
+| 2        | 7.x    |
 
 ## Configuration
 
@@ -36,6 +36,7 @@ This example uses a multi_match prefix query to search in the `punktde_node_sear
 	    NodeSearchService:
 	      logRequests: true
 	      searchStrategies:
+            position: end
 	        titlePrefix:
 	          condition: '${Array.indexOf(searchNodeTypes, "Neos.Neos:Document")}'
 	          request:
@@ -62,7 +63,7 @@ This example uses a multi_match prefix query to search in the `punktde_node_sear
 	            size: 20
 
 
-
+The `position` determines in which order the strategy conditions are evaluated.
 
 The `condition` is an Eel query, which can be parametrized by the following values. It is used to determine the search strategy to be used. 
 If no search strategy could be found, it falls back to database search.
@@ -83,4 +84,33 @@ These following parameters can be used in the search request to parametrice the 
 | ARGUMENT_TERM            | The Searchterm                         |
 | ARGUMENT_STARTINGPOINT   | The startingPoint path                 |
 
+## Tip: Use a marker nodeType to determine the best search strategy
 
+Sometimes reference editors for certain nodeTypes profit from custom search strategies. Eg. Only list document nodes that are visible and have a certain property set. We have limited options to determine a search strategy, thus we use the following trick: 
+
+1. Define a marker nodeType
+
+```
+'Vendor:SearchStrategyMarker.ListableEventSearch':
+  abstract: true
+```	  
+
+2. Use this marker nodeType in your referenceEditor
+
+```
+    events:
+      type: references
+      ui:
+        inspector:
+          editorOptions:
+            nodeTypes: ['Vendor:Documents.Event', 'Vendor:SearchStrategyMarker.ListableEventSearch']
+```
+
+3. Use this nodeType within the search strategy condition
+
+```
+...
+        eventSearchTitlePrefix:
+          condition: '${Array.indexOf(searchNodeTypes, "Vendor:SearchStrategyMarker.ListableEventSearch") != -1}'
+...
+```
