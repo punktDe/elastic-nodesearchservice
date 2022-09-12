@@ -109,7 +109,11 @@ class NodeSearchService implements NodeSearchServiceInterface
         array_walk_recursive(
             $request,
             static function (&$value) use ($replacements) {
-                $value = $replacements[$value] ?? $value;
+                foreach ($replacements as $replacementKey => $replacement) {
+                    if (strpos($value, $replacementKey)) {
+                        $value = str_replace($replacementKey, $replacement, $value);
+                    }
+                }
             }
         );
 
